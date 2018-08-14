@@ -4,7 +4,7 @@
         "module": "amd",
         "target": "es3",
         "sourceMap": true,
-
+        "noImplicitUseStrict": true,
         "lib": [
          "dom",
          "es2016"
