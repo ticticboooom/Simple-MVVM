@@ -1,10 +1,11 @@
 import { BindingConstants } from './constants/binding-constants';
 import { BindingModel } from './models/binding-model';
+import { DOMConstants } from './constants/dom-constants';
 export class Parser {
     public static parse(val: string): BindingModel {
         const cleanVal = val.replace(/\s/g, '');
-        const exp = this.extractExpression(cleanVal);
         const keyword = this.extractKeyword(cleanVal);
+        const exp = this.extractExpression(cleanVal);
         if (keyword == BindingConstants.valueBinding) {
             const model = this.parseValueBinding(exp);
             model.keyword = keyword;
@@ -24,8 +25,10 @@ export class Parser {
     private static parseValueBinding(exp: string): BindingModel {
         const model = new BindingModel();
         if (this.isName(exp)) {
-            model.expression = this.generateValueFunction(exp);
-        }        
+            model.setExpression = this.generateValueFunction(exp);
+            model.getExpression = this.generateValueGetFunction(exp);
+            model.initExpression = this.generateValueInitFunction(exp);
+        }
         return model;
     }
 
@@ -41,7 +44,19 @@ export class Parser {
     private static generateValueFunction(name: string): (self: object,  element: Element) => any {
         const func = ((self: object,  element: any): void => {
             const elemValue = element.value;
-            self[name] = elemValue;
+            self[name].set(elemValue);
+        });
+        return func;
+    }
+    private static generateValueGetFunction(name: string): (self: object,  element: Element) => any {
+        const func = ((self: object,  element: any): void => {
+            element.value = self[name].get();
+        });
+        return func;
+    }
+    private static generateValueInitFunction(name: string): (self: object,  element: Element) => any {
+        const func = ((self: object,  element: any): void => {
+            element.setAttribute(DOMConstants.boundNameAttribute, name);
         });
         return func;
     }

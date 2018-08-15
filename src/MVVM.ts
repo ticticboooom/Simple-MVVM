@@ -1,6 +1,7 @@
 import { Binder } from './binder';
 import { Selector } from './selector';
 import { Parser } from './parser';
+import { Observable } from './observable';
 
 export class MVVM {
     constructor() { }
@@ -13,4 +14,7 @@ export class MVVM {
             binder.bind(viewModel, elem, bindingModel);
         }
     }
+    public static observable(name: string): Observable {
+        return new Observable(name);
+     }
 }
