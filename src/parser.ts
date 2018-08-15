@@ -2,12 +2,18 @@ import { BindingConstants } from './constants/binding-constants';
 import { BindingModel } from './models/binding-model';
 import { DOMConstants } from './constants/dom-constants';
 export class Parser {
+
     public static parse(val: string): BindingModel {
         const cleanVal = val.replace(/\s/g, '');
         const keyword = this.extractKeyword(cleanVal);
         const exp = this.extractExpression(cleanVal);
         if (keyword == BindingConstants.valueBinding) {
             const model = this.parseValueBinding(exp);
+            model.keyword = keyword;
+            return model;
+        }
+        else if (keyword == BindingConstants.textBinding) {
+            const model = this.parseTextBinding(exp);
             model.keyword = keyword;
             return model;
         }
@@ -27,7 +33,16 @@ export class Parser {
         if (this.isName(exp)) {
             model.setExpression = this.generateValueSetFunction(exp);
             model.getExpression = this.generateValueGetFunction(exp);
-            model.initExpression = this.generateValueInitFunction(exp);
+            model.initExpression =this.generateInitFunction(exp, DOMConstants.boundNameAttribute);
+        }
+        return model;
+    }
+    private static parseTextBinding(exp: string): BindingModel {
+        const model = new BindingModel();
+        if (this.isName(exp)) {
+            model.setExpression = () => { };
+            model.getExpression = this.generateTextGetFunction(exp);
+            model.initExpression =this.generateInitFunction(exp, DOMConstants.boundNameAttribute);
         }
         return model;
     }
@@ -41,6 +56,13 @@ export class Parser {
         }
         return false;
     }
+    private static generateInitFunction(name: string, attributeName: string): (self: object,  element: Element) => any {
+        const func = ((self: object,  element: any): void => {
+            element.setAttribute(attributeName, name);
+        });
+        return func;
+    }
+
     private static generateValueSetFunction(name: string): (self: object,  element: Element) => any {
         const func = ((self: object,  element: any): void => {
             const elemValue = element.value;
@@ -54,9 +76,10 @@ export class Parser {
         });
         return func;
     }
-    private static generateValueInitFunction(name: string): (self: object,  element: Element) => any {
+
+    private static generateTextGetFunction(name: string): (self: object,  element: Element) => any {
         const func = ((self: object,  element: any): void => {
-            element.setAttribute(DOMConstants.boundNameAttribute, name);
+            element.innerHTML = self[name].get();
         });
         return func;
     }
