@@ -25,7 +25,7 @@ export class Parser {
     private static parseValueBinding(exp: string): BindingModel {
         const model = new BindingModel();
         if (this.isName(exp)) {
-            model.setExpression = this.generateValueFunction(exp);
+            model.setExpression = this.generateValueSetFunction(exp);
             model.getExpression = this.generateValueGetFunction(exp);
             model.initExpression = this.generateValueInitFunction(exp);
         }
@@ -41,7 +41,7 @@ export class Parser {
         }
         return false;
     }
-    private static generateValueFunction(name: string): (self: object,  element: Element) => any {
+    private static generateValueSetFunction(name: string): (self: object,  element: Element) => any {
         const func = ((self: object,  element: any): void => {
             const elemValue = element.value;
             self[name].set(elemValue);
