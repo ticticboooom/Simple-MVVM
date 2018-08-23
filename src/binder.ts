@@ -10,17 +10,19 @@ export class Binder {
 	public bind(vm: any, element: Element, model: BindingModel) {
 		let eventsArr = this.eventDictionary[model.keyword];
 		model.initExpression(vm, element);
-		for (let i = 0; i < eventsArr.length; i++) {
-			const event = eventsArr[i];
-			element.addEventListener(event, event => {
-				model.setExpression(vm, element);
-			});
-        }
-        const key = element.getAttribute(DOMConstants.boundNameAttribute);
+		if (eventsArr) {
+			for (let i = 0; i < eventsArr.length; i++) {
+				const event = eventsArr[i];
+				element.addEventListener(event, event => {
+					model.setExpression(vm, element);
+				});
+			}
+		}
+		const key = element.getAttribute(DOMConstants.boundNameAttribute);
 		if (vm.hasOwnProperty(key)) {
-			vm[key].setExpression = () => {
+			vm[key].setExpressions.push(() => {
 				model.getExpression(vm, element);
-			};
+			});
 		}
 	}
 }
