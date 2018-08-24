@@ -6,7 +6,18 @@
         {
             "type": "gulp",
             "task": "default",
-            "problemMatcher": []
+            "problemMatcher": [],
+            "group": {
+                "isDefault": true,
+                "kind": "build"
+            }
+        },
+        {
+            "type": "typescript",
+            "tsconfig": "tsconfig.json",
+            "problemMatcher": [
+                "$tsc"
+            ]
         }
     ]
 }

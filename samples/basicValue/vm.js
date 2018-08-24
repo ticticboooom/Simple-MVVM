@@ -9,8 +9,7 @@ requirejs(["MVVM"], function (MVVM) {
         self.value5 = MVVM.MVVM.observable("value5");
     }
     const vm = new ViewModel();
-    const mvvm = new MVVM.MVVM();
-    mvvm.bindToView(vm);
+    const mvvm = new MVVM.MVVM.bindToView(vm);
     vm.value1.set("hola test");
     vm.value2.set("hola test1");
     vm.value3.set("hola test2");

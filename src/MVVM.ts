@@ -5,13 +5,15 @@ import { Observable } from './observable';
 
 export class MVVM {
     constructor() { }
-    public bindToView(viewModel: any) {
+    public static bindToView(viewModel: any) {
         const toBind = Selector.selectElements();
         for (const elem of toBind) {
             const bindingAttribute = Selector.getBinding(elem);
-            const bindingModel = Parser.parse(bindingAttribute);
-            const binder = new Binder();
-            binder.bind(viewModel, elem, bindingModel);
+            let bindingModels = Parser.parse(bindingAttribute);
+            for (const model of bindingModels) {
+                const binder = new Binder();
+                binder.bind(viewModel, elem, model);
+            }
         }
     }
     public static observable(name: string): Observable {
